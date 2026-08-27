@@ -13,7 +13,7 @@
   --forest:#24402C;
   --forest-2:#2F5439;
   --sage:#86A374;
-  --sage-deep:#5E7A4E;
+  --sage-deep:#4A6340;
   --sage-wash:#E6ECDF;
   --rule:#DCD8CB;
   --rule-2:#C6C1B1;
@@ -95,7 +95,12 @@ a:hover{color:var(--sage-deep)}
 .brand-sg{font-family:Archivo,sans-serif;font-weight:800;font-size:1.24rem;letter-spacing:-.02em}
 .brand-sub{font-family:Archivo,sans-serif;font-weight:600;font-size:.6rem;letter-spacing:.19em;text-transform:uppercase;color:var(--sage-deep);margin-top:4px}
 
-.nav-switch{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+/* Focusable but not visible: the label is what people see, so the checkbox's
+   focus ring is mirrored onto it. Above 1080px the menu button is hidden, so
+   the checkbox is removed from the tab order entirely rather than sitting there
+   as an invisible stop. */
+.nav-switch{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;display:none}
+.nav-switch:focus-visible~.nav-btn{outline:2.5px solid var(--sage-deep);outline-offset:3px}
 .nav-btn{display:none;background:none;border:1px solid var(--rule-2);border-radius:9px;padding:9px 11px;color:var(--ink);cursor:pointer;order:3}
 .nav-btn svg{display:block}
 .nav-btn .x{display:none}
@@ -214,13 +219,19 @@ td .sub{display:block;font-size:.85rem;color:var(--ink-3);margin-top:3px;font-we
 .toc ol{margin:0;padding-left:20px;display:grid;gap:7px;font-family:Archivo,sans-serif;font-size:.94rem}
 
 /* ---------- cta band ---------- */
-.band{background:var(--forest);color:var(--cream);border-radius:16px;padding:46px 48px;margin:0;box-shadow:var(--shadow-m)}
-.band h2,.band h3{color:var(--cream)}
+.band{background:var(--forest);color:#F0EDE3;border-radius:16px;padding:46px 48px;margin:0;box-shadow:var(--shadow-m)}
+.band h2,.band h3{color:#F0EDE3}
 .band p{color:#D8E2D2;max-width:56ch}
-.band .btn-primary{background:var(--sage);border-color:var(--sage);color:#1A2A16}
+.band .btn-primary,
+.band .btn-primary:link,
+.band .btn-primary:visited{background:var(--sage);border-color:var(--sage);color:#1A2A16}
 .band .btn-primary:hover{background:#9AB689;color:#1A2A16}
-.band .btn-ghost{border-color:rgba(240,237,227,.32);color:var(--cream)}
-.band .btn-ghost:hover{border-color:var(--sage);color:var(--sage)}
+.band .btn-ghost,
+.band .btn-ghost:link,
+.band .btn-ghost:visited{border-color:rgba(240,237,227,.42);color:#F0EDE3}
+.band .btn-ghost:hover{border-color:#C6D8BC;color:#C6D8BC}
+/* The default focus ring is too dark against the band in the light scheme. */
+.band :focus-visible{outline-color:#F0EDE3}
 :root[data-theme="dark"] .band,
 :root:not([data-theme="light"]) .band{background:#1E2A1B}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .band{background:var(--forest)}}
@@ -261,8 +272,16 @@ footer{background:var(--paper);border-top:1px solid var(--rule);padding:56px 0 3
   .nav-switch:checked~.nav-btn .bars{display:none}
   .nav-switch:checked~.nav-btn .x{display:block}
   .nav-btn{display:block}
+  .nav-switch{display:block}
   .bar{position:relative}
   .tel{display:none}
+}
+@media (max-width:420px){
+  /* At 320px the brand, the bar CTA and the menu button do not fit on one line
+     and the menu button was being pushed off screen. The hero CTA sits a few
+     hundred pixels below, so the bar drops its button rather than the menu. */
+  .bar-cta{display:none}
+  .wrap{padding:0 16px}
 }
 @media (max-width:900px){
   .hero-grid{grid-template-columns:1fr;gap:38px}
@@ -355,6 +374,12 @@ figure{margin:0}
 .bleed-txt{position:absolute;inset:0;display:flex;align-items:center;z-index:2}
 .bleed-txt .wrap{width:100%}
 .bleed-txt h2,.bleed-txt p{color:#F0EDE3;max-width:34ch;text-shadow:0 1px 20px rgba(0,0,0,.4)}
+/* The gradient runs out before the text does and the bottom of the block can
+   land on bright foliage. This holds the whole block over a dark enough ground
+   to keep the text at 4.5:1 wherever it falls. */
+.bleed-txt::before{content:"";position:absolute;inset:0;background:rgba(12,16,11,.62);z-index:-1}
+.bleed-txt{isolation:isolate}
+.hero-photo figcaption{background:linear-gradient(to top,rgba(12,16,11,.86) 0,rgba(12,16,11,.72) 60%,rgba(12,16,11,.32) 100%)}
 .bleed-txt p{color:#D6DFD1}
 
 .photo-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:34px 0 0}
@@ -362,3 +387,10 @@ figure{margin:0}
 .photo-strip img{display:block;width:100%;height:220px;object-fit:cover}
 .photo-strip figcaption{font-family:Archivo,sans-serif;font-size:.8rem;color:var(--ink-3);padding:11px 14px}
 @media (max-width:760px){.photo-strip{grid-template-columns:1fr}}
+
+/* Visible to assistive technology only. Used for section headings that
+   would be redundant on screen but are needed to keep the outline whole. */
+.vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.byline{font-size:.88rem;color:var(--ink-3);margin-top:18px}
+.byline a{color:var(--ink-2)}
