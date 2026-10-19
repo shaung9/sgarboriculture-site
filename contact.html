@@ -87,7 +87,9 @@
     <h2 class="vh">Get in touch</h2>
     <div class="hero-grid">
       <div>
-        <form class="form" action="mailto:info@sgarboriculture.com.au" method="post" enctype="text/plain">
+        <form class="form" id="enquiry" action="https://formspree.io/f/maeqkzwy" method="POST" accept-charset="UTF-8">
+          <input type="hidden" name="_subject" value="Website enquiry — sgarboriculture.com.au">
+          <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <div class="fgrid">
             <div class="f"><label for="f-name">Your name <span class="req">*</span></label>
               <input id="f-name" name="name" type="text" autocomplete="name" required></div>
@@ -128,9 +130,15 @@
           </div>
           <div style="display:flex;gap:13px;align-items:center;flex-wrap:wrap;margin-top:22px">
             <button class="btn btn-primary" type="submit">Send it</button>
-            <span style="font-family:Archivo,sans-serif;font-size:.88rem;color:var(--ink-3)">Opens in your email app</span>
+            <span class="form-note" style="font-family:Archivo,sans-serif;font-size:.88rem;color:var(--ink-3)">Fixed quote back within one business day</span>
           </div>
         </form>
+        <div id="enquiry-done" class="note" hidden role="status" aria-live="polite">
+          <p style="margin:0"><strong>Sent.</strong> Thanks — I will come back to you within one business day. If it is urgent, call <a href="tel:+61400777395">0400 777 395</a>.</p>
+        </div>
+        <div id="enquiry-fail" class="note" hidden role="alert">
+          <p style="margin:0">That did not send. Please email <a href="mailto:info@sgarboriculture.com.au">info@sgarboriculture.com.au</a> or call <a href="tel:+61400777395">0400 777 395</a>.</p>
+        </div>
         <p style="font-size:.9rem;color:var(--ink-3);font-family:Archivo,sans-serif;margin-top:14px">
           If the form does not work on your device, email <a href="mailto:info@sgarboriculture.com.au">info@sgarboriculture.com.au</a> or call <a href="tel:+61400777395">0400 777 395</a>.</p>
       </div>
@@ -220,5 +228,20 @@
     </div>
   </div>
 </footer>
+<script>
+(function(){
+  var f=document.getElementById('enquiry'); if(!f) return;
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var btn=f.querySelector('button[type=submit]'); btn.disabled=true; btn.textContent='Sending…';
+    fetch(f.action,{method:'POST',body:new FormData(f),headers:{'Accept':'application/json'}})
+      .then(function(r){ if(!r.ok) throw new Error(r.status);
+        f.hidden=true; document.getElementById('enquiry-done').hidden=false;
+        document.getElementById('enquiry-done').scrollIntoView({behavior:'smooth',block:'center'}); })
+      .catch(function(){ btn.disabled=false; btn.textContent='Send it';
+        document.getElementById('enquiry-fail').hidden=false; });
+  });
+})();
+</script>
 </body>
 </html>
